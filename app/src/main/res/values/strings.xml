@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">BasketballCounter</string>
+    <string name="teamA">Team A</string>
+    <string name="teamB">Team B</string>'
+    <string name="button_height">60dp</string>
+    <string name="button_width">120dp</string>
+    <string name="teamBScore">0</string>
+    <string name="teamAScore">0</string>
+    <string name="plus3_text">+3 points</string>
+    <string name="plus2_text">+2 points</string>
+    <string name="plus1_text">Free throw</string>
+    <string name="reset_text">Reset</string>
+</resources>
