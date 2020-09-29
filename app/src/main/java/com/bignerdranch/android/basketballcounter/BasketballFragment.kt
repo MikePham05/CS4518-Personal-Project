@@ -138,9 +138,19 @@ class BasketballFragment : Fragment() {
                     scoreBTextView.text = this.game.value!!.teamBScore.toString()
                     photoFile = basketballViewModel.getPhotoFile(game)
                     photoUri = FileProvider.getUriForFile(requireActivity(), "com.bignerdranch.android.basketballcounter.fileprovider", photoFile)
+                    updatePhotoView()
                 }
             }
         )
+    }
+
+    private fun updatePhotoView() {
+        if (photoFile.exists()) {
+            val bitmap = getScaledBitmap(photoFile.path, requireActivity())
+            teamAPhotoView.setImageBitmap(bitmap)
+        } else {
+            teamAPhotoView.setImageDrawable(null)
+        }
     }
 
     override fun onStart() {
@@ -228,6 +238,7 @@ class BasketballFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         callbacks = null
+        requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -242,6 +253,11 @@ class BasketballFragment : Fragment() {
                 basketballViewModel.scoreDifference = data.getIntExtra(EXTRA_SCORE_DIFF, 0)
                 scoreDifferenceTextView.text = basketballViewModel.scoreDifference.toString()
             }
+        }
+
+        if (requestCode == REQUEST_PHOTO) {
+            requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            updatePhotoView()
         }
     }
 }
