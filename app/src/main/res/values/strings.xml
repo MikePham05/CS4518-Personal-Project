@@ -10,4 +10,12 @@
     <string name="plus2_text">+2 points</string>
     <string name="plus1_text">Free throw</string>
     <string name="reset_text">Reset</string>
+    <string name="stat_text">Stat</string>
+    <string name="difference">0</string>
+    <string name="score_difference_text">A is leading by</string>
+    <string name="go_back_to_main_activity">Update Stat</string>
+    <string name="score_difference">0</string>
+    <string name="item_game_score">0</string>
+    <string name="display_text">DISPLAY</string>
+    <string name="save_text">SAVE</string>
 </resources>

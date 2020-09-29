@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_basketball"
     android:layout_height="match_parent"
+    android:layout_width="match_parent"
     android:orientation="vertical"
-    android:layout_gravity="center">
+    tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_height="300dp"
+        android:layout_height="500dp"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         >
@@ -23,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="100dp"
                 android:textSize="30sp"
                 android:text="@string/teamA">
 
@@ -42,17 +45,18 @@
             <Button
                 android:id="@+id/plus3_button_teamA"
                 android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="15dp"
-                android:text = "@string/plus3_text">
+                android:layout_marginTop="30dp"
+                android:text = "@string/plus3_text"
+                >
 
             </Button>
 
             <Button
                 android:id="@+id/plus2_button_teamA"
                 android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:text = "@string/plus2_text">
@@ -62,7 +66,7 @@
             <Button
                 android:id="@+id/plus1_button_teamA"
                 android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:text = "@string/plus1_text">
@@ -87,10 +91,11 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/team_b"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="100dp"
                 android:textSize="30sp"
                 android:text="@string/teamB">
 
@@ -109,17 +114,18 @@
             <Button
                 android:id="@+id/plus3_button_teamB"
                 android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="30dp"
                 android:text = "@string/plus3_text">
 
             </Button>
 
+
             <Button
                 android:id="@+id/plus2_button_teamB"
                 android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:text = "@string/plus2_text">
@@ -129,7 +135,7 @@
             <Button
                 android:id="@+id/plus1_button_teamB"
                 android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:text = "@string/plus1_text">
@@ -140,13 +146,18 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
+
     <Button
         android:id="@+id/reset_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="135dp"
-        android:layout_marginRight="100dp"
         android:text = "@string/reset_text">
 
     </Button>
@@ -156,21 +167,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/stat_text"
-        android:layout_marginTop="135dp"
-        android:layout_marginLeft="100dp">
+        android:text="@string/stat_text">
 
     </Button>
+
+        <Button
+            android:id="@+id/displayButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/display_text">
+
+        </Button>
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/save_text">
+
+        </Button>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/score_difference"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="50dp"
-        android:layout_marginTop="135dp"
         android:text="@string/score_difference"
         android:layout_gravity="center">
 
     </TextView>
 
-</FrameLayout>
+
+
+</LinearLayout>
