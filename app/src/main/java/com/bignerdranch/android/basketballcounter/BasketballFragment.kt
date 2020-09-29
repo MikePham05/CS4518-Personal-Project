@@ -3,17 +3,26 @@ package com.bignerdranch.android.basketballcounter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_basketball.*
+import java.io.File
+import java.net.URI
 import java.util.*
 
 private const val KEY_SCORE_A = "scoreA"
@@ -21,6 +30,7 @@ private const val KEY_SCORE_B = "scoreB"
 private const val KEY_SCORE_DIFF = "scoreDifference"
 private const val REQUEST_CODE_0 = 0
 private const val ARG_GAME_ID = "game_id"
+private const val REQUEST_PHOTO = 2
 
 class BasketballFragment : Fragment() {
     /**
@@ -46,6 +56,12 @@ class BasketballFragment : Fragment() {
     private lateinit var teamBTextView: TextView
     private lateinit var saveButton: Button
     private lateinit var game: LiveData<Game>
+    private lateinit var teamAPhotoButton: ImageButton
+    private lateinit var teamBPhotoButton: ImageButton
+    private lateinit var teamAPhotoView: ImageView
+    private lateinit var teamBPhotoView: ImageView
+    private lateinit var photoFile: File
+    private lateinit var photoUri: Uri
     private var callbacks: Callbacks? = null
     private var startTime:Long = 0
     private var endTime:Long = 0
@@ -82,7 +98,10 @@ class BasketballFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val view =  inflater.inflate(R.layout.fragment_basketball, container, false)
-
+        teamAPhotoButton = view.findViewById(R.id.team_A_camera) as ImageButton
+        teamBPhotoButton = view.findViewById(R.id.team_B_camera) as ImageButton
+        teamAPhotoView = view.findViewById(R.id.team_A_photo) as ImageView
+        teamBPhotoView = view.findViewById(R.id.team_B_photo) as ImageView
         plus3TeamAButton = view.findViewById(R.id.plus3_button_teamA) as Button
         plus2TeamAButton = view.findViewById(R.id.plus2_button_teamA) as Button
         plus1TeamAButton = view.findViewById(R.id.plus1_button_teamA) as Button
@@ -117,6 +136,8 @@ class BasketballFragment : Fragment() {
                     teamBTextView.text = this.game.value!!.teamBName
                     scoreATextView.text = this.game.value!!.teamAScore.toString()
                     scoreBTextView.text = this.game.value!!.teamBScore.toString()
+                    photoFile = basketballViewModel.getPhotoFile(game)
+                    photoUri = FileProvider.getUriForFile(requireActivity(), "com.bignerdranch.android.basketballcounter.fileprovider", photoFile)
                 }
             }
         )
@@ -149,7 +170,6 @@ class BasketballFragment : Fragment() {
             scoreBTextView.text = (basketballViewModel.updatePoints("B", 1).toString())
         }
 
-
         statButton.setOnClickListener{
             val teamAscore = basketballViewModel.scoreA
             val teamBscore = basketballViewModel.scoreB
@@ -178,6 +198,30 @@ class BasketballFragment : Fragment() {
         saveButton.setOnClickListener {
             Log.d("save", "Display button Pressed")
             basketballViewModel.saveGame(this.game.value!!)
+        }
+
+        teamAPhotoButton.apply {
+            val packageManager: PackageManager = requireActivity().packageManager
+            val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val resolvedActivity: ResolveInfo? = packageManager.resolveActivity(captureImage, PackageManager.MATCH_DEFAULT_ONLY)
+            if (resolvedActivity == null) {
+                isEnabled = false
+            }
+
+            setOnClickListener {
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+
+                val cameraActivities: List<ResolveInfo> = packageManager.queryIntentActivities(captureImage, PackageManager.MATCH_DEFAULT_ONLY)
+                for (cameraActivity in cameraActivities) {
+                    requireActivity().grantUriPermission(
+                        cameraActivity.activityInfo.packageName,
+                        photoUri,
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                }
+                @Suppress("DEPRECATION")
+                startActivityForResult(captureImage, REQUEST_PHOTO)
+            }
         }
     }
 

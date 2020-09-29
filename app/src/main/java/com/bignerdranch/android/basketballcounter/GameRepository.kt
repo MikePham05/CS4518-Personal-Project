@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.bignerdranch.android.basketballcounter.database.GameDatabase
+import java.io.File
 import java.lang.IllegalStateException
 import java.util.*
 import java.util.concurrent.Executors
@@ -16,9 +17,24 @@ class GameRepository private constructor(context: Context){
         GameDatabase::class.java,
         DATABASE_NAME
     ).build()
-
     private val gameDao = database.gameDao()
     private val executor = Executors.newSingleThreadExecutor()
+    private val filesDir = context.applicationContext.filesDir
+
+    companion object {
+        private var INSTANCE: GameRepository?= null
+
+        fun initialize(context: Context) {
+            if (INSTANCE == null) {
+                INSTANCE = GameRepository(context)
+            }
+        }
+
+        fun get(): GameRepository {
+            return INSTANCE ?:
+            throw IllegalStateException("must be initialized first")
+        }
+    }
 
     fun getGames(): LiveData<List<Game>> = gameDao.getGames()
 
@@ -36,19 +52,5 @@ class GameRepository private constructor(context: Context){
         }
     }
 
-
-    companion object {
-        private var INSTANCE: GameRepository?= null
-
-        fun initialize(context: Context) {
-            if (INSTANCE == null) {
-                INSTANCE = GameRepository(context)
-            }
-        }
-
-        fun get(): GameRepository {
-            return INSTANCE ?:
-            throw IllegalStateException("must be initialized first")
-        }
-    }
+    fun getPhotoFile (game: Game): File = File(filesDir, game.photoFileName)
 }

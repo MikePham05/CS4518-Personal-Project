@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import java.io.File
 import java.util.*
 
 class BasketballViewModel : ViewModel() {
@@ -37,8 +38,6 @@ class BasketballViewModel : ViewModel() {
         scoreB = 0
     }
 
-
-
     fun loadGame(gameId: UUID) {
         gameIdLiveData.value = gameId
         Log.d("idd", "${gameIdLiveData.value}")
@@ -46,5 +45,9 @@ class BasketballViewModel : ViewModel() {
 
     fun saveGame(game: Game){
         gameRepository.updateGame(game)
+    }
+
+    fun getPhotoFile(game: Game): File {
+        return gameRepository.getPhotoFile(game)
     }
 }

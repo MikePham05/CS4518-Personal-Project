@@ -9,6 +9,7 @@ class GameListViewModel : ViewModel() {
     private val gameRepository = GameRepository.get()
     val gameListLiveData = gameRepository.getGames()
 
+    /*
     init {
         for (i in 0 until 150) {
             var game = Game()
@@ -21,6 +22,7 @@ class GameListViewModel : ViewModel() {
             gameRepository.addGame(game)
         }
     }
+     */
 
     private fun randomNameGenerator(): String {
         val alphabet: List<Char> = ('A'..'Z') + ('0'..'9')
