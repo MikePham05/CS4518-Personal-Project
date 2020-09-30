@@ -22,7 +22,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_basketball.*
 import java.io.File
-import java.net.URI
 import java.util.*
 
 private const val KEY_SCORE_A = "scoreA"
@@ -60,8 +59,12 @@ class BasketballFragment : Fragment() {
     private lateinit var teamBPhotoButton: ImageButton
     private lateinit var teamAPhotoView: ImageView
     private lateinit var teamBPhotoView: ImageView
-    private lateinit var photoFile: File
-    private lateinit var photoUri: Uri
+    private lateinit var teamAPhoto: File
+    private lateinit var teamBPhoto: File
+    private lateinit var photoUriA: Uri
+    private lateinit var photoUriB: Uri
+    private var pictureATaken: Boolean = false
+    private var pictureBTaken: Boolean = false
     private var callbacks: Callbacks? = null
     private var startTime:Long = 0
     private var endTime:Long = 0
@@ -136,8 +139,17 @@ class BasketballFragment : Fragment() {
                     teamBTextView.text = this.game.value!!.teamBName
                     scoreATextView.text = this.game.value!!.teamAScore.toString()
                     scoreBTextView.text = this.game.value!!.teamBScore.toString()
-                    photoFile = basketballViewModel.getPhotoFile(game)
-                    photoUri = FileProvider.getUriForFile(requireActivity(), "com.bignerdranch.android.basketballcounter.fileprovider", photoFile)
+                    teamAPhoto = basketballViewModel.getPhotoFile(game)
+                    photoUriA = FileProvider.getUriForFile(
+                            requireActivity(),
+                            "com.bignerdranch.android.basketballcounter.fileprovider",
+                            teamAPhoto)
+                    teamBPhoto = basketballViewModel.getPhotoFile(game)
+                    photoUriB = FileProvider.getUriForFile(
+                            requireActivity(),
+                            "com.bignerdranch.android.basketballcounter.fileprovider",
+                            teamBPhoto
+                        )
                     updatePhotoView()
                 }
             }
@@ -145,11 +157,15 @@ class BasketballFragment : Fragment() {
     }
 
     private fun updatePhotoView() {
-        if (photoFile.exists()) {
-            val bitmap = getScaledBitmap(photoFile.path, requireActivity())
+        if (teamAPhoto.exists() and pictureATaken) {
+            val bitmap = getScaledBitmap(teamAPhoto.path, requireActivity())
             teamAPhotoView.setImageBitmap(bitmap)
-        } else {
-            teamAPhotoView.setImageDrawable(null)
+            pictureATaken = false
+        }
+        if (teamBPhoto.exists() and pictureBTaken) {
+            val bitmap = getScaledBitmap(teamBPhoto.path, requireActivity())
+            teamBPhotoView.setImageBitmap(bitmap)
+            pictureBTaken = false
         }
     }
 
@@ -219,13 +235,39 @@ class BasketballFragment : Fragment() {
             }
 
             setOnClickListener {
-                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                pictureATaken = true
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUriA)
 
                 val cameraActivities: List<ResolveInfo> = packageManager.queryIntentActivities(captureImage, PackageManager.MATCH_DEFAULT_ONLY)
                 for (cameraActivity in cameraActivities) {
                     requireActivity().grantUriPermission(
                         cameraActivity.activityInfo.packageName,
-                        photoUri,
+                        photoUriA,
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                }
+                @Suppress("DEPRECATION")
+                startActivityForResult(captureImage, REQUEST_PHOTO)
+            }
+        }
+
+        teamBPhotoButton.apply {
+            val packageManager: PackageManager = requireActivity().packageManager
+            val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val resolvedActivity: ResolveInfo? = packageManager.resolveActivity(captureImage, PackageManager.MATCH_DEFAULT_ONLY)
+            if (resolvedActivity == null) {
+                isEnabled = false
+            }
+
+            setOnClickListener {
+                pictureBTaken = true
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUriB)
+
+                val cameraActivities: List<ResolveInfo> = packageManager.queryIntentActivities(captureImage, PackageManager.MATCH_DEFAULT_ONLY)
+                for (cameraActivity in cameraActivities) {
+                    requireActivity().grantUriPermission(
+                        cameraActivity.activityInfo.packageName,
+                        photoUriB,
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                 }
@@ -238,7 +280,8 @@ class BasketballFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         callbacks = null
-        requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        requireActivity().revokeUriPermission(photoUriA, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        requireActivity().revokeUriPermission(photoUriB, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -256,7 +299,8 @@ class BasketballFragment : Fragment() {
         }
 
         if (requestCode == REQUEST_PHOTO) {
-            requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            requireActivity().revokeUriPermission(photoUriA, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            requireActivity().revokeUriPermission(photoUriB, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             updatePhotoView()
         }
     }
