@@ -6,6 +6,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.content.res.AssetManager
+import android.content.res.Resources
+import android.media.MediaActionSound
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -39,7 +42,6 @@ class BasketballFragment : Fragment() {
     interface Callbacks {
         fun onDisplayClicked()
     }
-
     private lateinit var basketball: Basketball
     private lateinit var plus3TeamAButton: Button
     private lateinit var plus2TeamAButton: Button
@@ -47,6 +49,8 @@ class BasketballFragment : Fragment() {
     private lateinit var plus3TeamBButton: Button
     private lateinit var plus2TeamBButton: Button
     private lateinit var plus1TeamBButton: Button
+    private lateinit var teamACheerButton: ImageButton
+    private lateinit var teamBCheerButton: ImageButton
     private lateinit var resetButton: Button
     private lateinit var statButton: Button
     private lateinit var scoreATextView: TextView
@@ -64,6 +68,8 @@ class BasketballFragment : Fragment() {
     private lateinit var teamBPhoto: File
     private lateinit var photoUriA: Uri
     private lateinit var photoUriB: Uri
+    private lateinit var soundUriA: Uri
+    private lateinit var soundUriB: Uri
     private lateinit var cheeringSounds: CheeringSounds
     private var pictureATaken: Boolean = false
     private var pictureBTaken: Boolean = false
@@ -126,8 +132,8 @@ class BasketballFragment : Fragment() {
         teamBTextView.text = basketballViewModel.teamBName
         scoreATextView.text = basketballViewModel.scoreA.toString()
         scoreBTextView.text = basketballViewModel.scoreB.toString()
-
-
+        teamACheerButton = view.findViewById(R.id.team_A_cheer) as ImageButton
+        teamBCheerButton = view.findViewById(R.id.team_B_cheer) as ImageButton
         return view
     }
 
@@ -256,7 +262,7 @@ class BasketballFragment : Fragment() {
 
         teamBPhotoButton.apply {
             val packageManager: PackageManager = requireActivity().packageManager
-            val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val captureImage: Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             val resolvedActivity: ResolveInfo? = packageManager.resolveActivity(captureImage, PackageManager.MATCH_DEFAULT_ONLY)
             if (resolvedActivity == null) {
                 isEnabled = false
@@ -277,6 +283,18 @@ class BasketballFragment : Fragment() {
                 @Suppress("DEPRECATION")
                 startActivityForResult(captureImage, REQUEST_PHOTO)
             }
+        }
+
+        teamACheerButton.setOnClickListener {
+            var mediaPlayer: MediaPlayer? = MediaPlayer.create(requireContext(), R.raw.a65_cjipie)
+            mediaPlayer?.start()
+            //cheeringSounds.play(cheeringSounds.sounds[0])
+        }
+
+        teamBCheerButton.setOnClickListener {
+            var mediaPlayer: MediaPlayer? = MediaPlayer.create(requireContext(), R.raw.a76_joooaah)
+            mediaPlayer?.start()
+            // cheeringSounds.play(cheeringSounds.sounds[1])
         }
     }
 

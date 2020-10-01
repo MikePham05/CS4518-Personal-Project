@@ -21,7 +21,6 @@ class MainActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
-
         scoreDifference = findViewById(R.id.difference)
         goBackButton = findViewById(R.id.go_back_button)
 

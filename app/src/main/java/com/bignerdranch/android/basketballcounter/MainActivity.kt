@@ -24,9 +24,6 @@ class MainActivity : AppCompatActivity(), BasketballFragment.Callbacks, GameList
             supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment).commit()
         }
 
-        var cheeringSound = CheeringSound(assets)
-        cheeringSound.loadSounds()
-
     }
 
     override fun onDisplayClicked() {
