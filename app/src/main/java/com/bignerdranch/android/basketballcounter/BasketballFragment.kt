@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.content.res.AssetManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -63,6 +64,7 @@ class BasketballFragment : Fragment() {
     private lateinit var teamBPhoto: File
     private lateinit var photoUriA: Uri
     private lateinit var photoUriB: Uri
+    private lateinit var cheeringSounds: CheeringSounds
     private var pictureATaken: Boolean = false
     private var pictureBTaken: Boolean = false
     private var callbacks: Callbacks? = null
@@ -93,6 +95,7 @@ class BasketballFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val gameId: UUID = arguments?.getSerializable(ARG_GAME_ID) as UUID
         basketballViewModel.loadGame(gameId)
+        cheeringSounds = CheeringSounds(requireContext().assets)
     }
 
     override fun onCreateView(
