@@ -13,6 +13,7 @@ private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity(), BasketballFragment.Callbacks, GameListFragment.CallBacks {
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -23,6 +24,8 @@ class MainActivity : AppCompatActivity(), BasketballFragment.Callbacks, GameList
             supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment).commit()
         }
 
+        var cheeringSound = CheeringSound(assets)
+        cheeringSound.loadSounds()
 
     }
 
