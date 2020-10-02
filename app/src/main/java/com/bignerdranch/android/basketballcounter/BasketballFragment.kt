@@ -5,9 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
-import android.content.res.AssetManager
-import android.content.res.Resources
-import android.media.MediaActionSound
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -24,6 +21,9 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProviders
+import com.bignerdranch.android.basketballcounter.api.CITY_NAME
+import com.bignerdranch.android.basketballcounter.api.OpenWeather
+import com.bignerdranch.android.basketballcounter.api.OpenWeatherApi
 import kotlinx.android.synthetic.main.fragment_basketball.*
 import java.io.File
 import java.util.*
@@ -34,6 +34,8 @@ private const val KEY_SCORE_DIFF = "scoreDifference"
 private const val REQUEST_CODE_0 = 0
 private const val ARG_GAME_ID = "game_id"
 private const val REQUEST_PHOTO = 2
+private const val TAG = "Retro"
+
 
 class BasketballFragment : Fragment() {
     /**
@@ -42,6 +44,8 @@ class BasketballFragment : Fragment() {
     interface Callbacks {
         fun onDisplayClicked()
     }
+
+    private lateinit var weatherInfoTextView: TextView
     private lateinit var basketball: Basketball
     private lateinit var plus3TeamAButton: Button
     private lateinit var plus2TeamAButton: Button
@@ -97,12 +101,6 @@ class BasketballFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val gameId: UUID = arguments?.getSerializable(ARG_GAME_ID) as UUID
-        basketballViewModel.loadGame(gameId)
-        cheeringSounds = CheeringSounds(requireContext().assets)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -128,6 +126,7 @@ class BasketballFragment : Fragment() {
         scoreDifferenceTextView = view.findViewById(R.id.score_difference) as TextView
         teamATextView = view.findViewById(R.id.team_A) as TextView
         teamBTextView = view.findViewById(R.id.team_b) as TextView
+        weatherInfoTextView = view.findViewById(R.id.weather_info_TextView) as TextView
         teamATextView.text = basketballViewModel.teamAName
         teamBTextView.text = basketballViewModel.teamBName
         scoreATextView.text = basketballViewModel.scoreA.toString()
@@ -135,6 +134,21 @@ class BasketballFragment : Fragment() {
         teamACheerButton = view.findViewById(R.id.team_A_cheer) as ImageButton
         teamBCheerButton = view.findViewById(R.id.team_B_cheer) as ImageButton
         return view
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val gameId: UUID = arguments?.getSerializable(ARG_GAME_ID) as UUID
+        basketballViewModel.loadGame(gameId)
+        cheeringSounds = CheeringSounds(requireContext().assets)
+
+        val openWeatherLiveData: LiveData<String> = OpenWeather().fetchContents()
+        openWeatherLiveData.observe(
+            this,
+            androidx.lifecycle.Observer { responseString ->
+                Log.d(TAG, "Response received: $responseString")
+                weatherInfoTextView.text = CITY_NAME + ": " + responseString + "Fahrenheit"
+            })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

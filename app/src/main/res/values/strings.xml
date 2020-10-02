@@ -18,4 +18,5 @@
     <string name="item_game_score">0</string>
     <string name="display_text">DISPLAY</string>
     <string name="save_text">SAVE</string>
+    <string name="weather_info">Weather is lit bro</string>
 </resources>
